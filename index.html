@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRAND EMPIRE – Business Simulator</title>
+<style>
+:root{--bg:#0e1420;--panel:#182337;--panel2:#202e45;--line:#30425d;--text:#f3f6fc;--muted:#aab8cc;--gold:#e5b957;--green:#51c995;--red:#f07878;--blue:#78aef5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 13px;background:var(--gold);color:#171717;font-weight:750}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{background:#572d39;color:white}
+.wrap{max-width:1180px;margin:auto;padding:18px}.brand{font-size:32px;font-weight:950;letter-spacing:-1.5px}.brand span{color:var(--gold)}.muted{color:var(--muted)}.small{font-size:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px}.grid{display:grid;gap:11px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{background:var(--panel2);padding:12px;border-radius:11px;min-width:0}.stat span{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:22px;overflow-wrap:anywhere}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.tag,.pill{border:1px solid var(--line);border-radius:30px;padding:4px 9px;font-size:12px;color:var(--muted);display:inline-block}.tabs{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin:14px 0}.tabs button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:12px;padding:10px 4px}.tabs button.active{border-color:var(--gold);background:#383226;color:white}label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}input,select{width:100%;padding:10px;border-radius:9px;border:1px solid var(--line);background:#101a2a;color:var(--text)}.field{margin:8px 0}.bar{height:8px;background:#344158;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green)}.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1;min-width:130px}.hidden{display:none!important}.notice{min-height:22px;color:var(--green);font-size:13px;margin:8px 0}.good{color:var(--green)}.bad{color:var(--red)}.gold{color:var(--gold)}h1,h2,h3,p{margin-top:0}.event{padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.event:last-child{border:0}.table{width:100%;border-collapse:collapse;font-size:13px}.table td,.table th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}.table th{color:var(--muted);font-weight:600}.section-title{font-size:20px;font-weight:850;margin-bottom:3px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:760px){.wrap{padding:11px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs{grid-template-columns:repeat(4,1fr)}.two,.three{grid-template-columns:1fr}.top{align-items:flex-start}.brand{font-size:27px}}
+</style></head>
+<body><div class="wrap">
+<header class="top" style="margin-bottom:15px"><div><div class="brand">BRAND <span>EMPIRE</span></div><div class="small muted">BUSINESS & ECONOMY SIMULATOR</div></div><div id="worldClock" class="tag">Noch nicht gestartet</div></header>
+<section id="setup" class="card">
+ <span class="pill">NEUES SPIEL</span><h1>Gründe dein Unternehmen.</h1><p class="muted">Starte mit 500 €. Baue Produkte, Büros und Teams auf. Die Konkurrenz wirtschaftet währenddessen selbstständig weiter.</p>
+ <div class="grid two">
+  <div class="field"><label>Firmenname</label><input id="coName" maxlength="35" placeholder="z. B. Bennet Industries"></div>
+  <div class="field"><label>Branche</label><select id="coIndustry"><option>Sport & Mode</option><option>Technologie</option><option>Möbel & Einrichtung</option><option>Lebensmittel</option><option>Automobil</option><option>Kosmetik</option><option>Sonstiges</option></select></div>
+  <div class="field"><label>Hauptsitz</label><input id="coCity" maxlength="35" placeholder="z. B. Würzburg"></div>
+  <div class="field"><label>Startkapital</label><input value="500 €" disabled></div>
+ </div><button id="start">Unternehmen gründen →</button><div id="setupMsg" class="notice"></div>
+</section>
+<main id="game" class="hidden">
+ <section class="card">
+  <div class="top"><div><div class="small muted">DEIN UNTERNEHMEN</div><h1 id="coTitle" style="margin:0"></h1><div id="coMeta" class="small muted"></div></div><div style="text-align:right"><span id="day" class="tag">Tag 1</span><div id="companyLevel" style="font-weight:800;margin-top:5px">Start-up</div></div></div>
+  <div class="grid stats" style="margin-top:14px">
+   <div class="stat"><span>Firmenkonto</span><strong id="cash">500 €</strong></div><div class="stat"><span>Privatkonto</span><strong id="privateCash">0 €</strong></div><div class="stat"><span>Umsatz gesamt</span><strong id="revenue">0 €</strong></div><div class="stat"><span>Mitarbeiter</span><strong id="employees">0</strong></div>
+  </div>
+  <div style="margin-top:13px"><div class="row"><b>Unternehmensstärke</b><b id="score">10 / 100</b></div><div class="bar" style="margin-top:7px"><i id="scoreBar" style="width:10%"></i></div><div class="small muted" id="scoreInfo" style="margin-top:5px"></div></div>
+ </section>
+ <nav class="tabs">
+  <button class="active" data-tab="home">Übersicht</button><button data-tab="products">Produkte</button><button data-tab="staff">Personal</button><button data-tab="office">Büros</button><button data-tab="finance">Finanzen</button><button data-tab="market">Markt</button><button data-tab="orders">Bestellungen & E-Mail</button><button data-tab="reports">Berichte</button>
+ </nav>
+ <section id="view" class="card" aria-live="polite"></section>
+ <div class="actions"><button id="nextDay">▶ Nächsten Tag simulieren</button><button id="save" class="secondary">Speichern</button><button id="reset" class="secondary">Neues Spiel</button></div>
+ <div id="msg" class="notice" role="status"></div>
+</main><footer class="footer">BRAND EMPIRE · Version 2.2 · Spielstand wird in diesem Browser gespeichert</footer>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), money=n=>Math.round(n).toLocaleString('de-DE')+' €', esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let s=null,tab='home';
+const rivalsSeed=[
+ {name:'NOVA Group',industry:'Sport & Mode',cash:18000,products:3,staff:12,share:22,level:48},
+ {name:'Kernwerk GmbH',industry:'Möbel & Einrichtung',cash:9500,products:2,staff:7,share:14,level:34},
+ {name:'PixelPeak',industry:'Technologie',cash:32000,products:4,staff:18,share:27,level:61},
+ {name:'UrbanLeaf',industry:'Sport & Mode',cash:6200,products:2,staff:4,share:9,level:25},
+ {name:'Westmark AG',industry:'Lebensmittel',cash:26000,products:5,staff:22,share:28,level:55}
+];
+function note(t,setup=false){$(setup?'setupMsg':'msg').textContent=t}
+function log(t){s.logs.unshift('Tag '+s.day+': '+t);s.logs=s.logs.slice(0,60)}
+function strength(){return Math.max(0,Math.min(100,Math.round(8+s.products.length*7+s.staff.length*2+s.office.level*5+s.totalRevenue/180+s.marketing*.12+s.unitsSold*.25)))}
+function level(n){return n<20?'Start-up':n<40?'Im Aufbau':n<65?'Etabliert':'Marktstark'}
+function save(){if(s){try{localStorage.setItem('brandEmpireV2',JSON.stringify(s));note('Spielstand gespeichert.')}catch(e){note('Speichern nicht verfügbar.')}}}
+function newGame(){
+ let name=$('coName').value.trim(),city=$('coCity').value.trim();if(!name||!city){note('Bitte Firmenname und Firmensitz eingeben.',true);return}
+ s={name,industry:$('coIndustry').value,city,day:1,cash:500,privateCash:0,products:[],staff:[],office:{level:0,rent:0,capacity:0},totalRevenue:0,totalCosts:0,marketing:0,unitsSold:0,customers:0,logs:[],rivals:rivalsSeed.map(x=>({...x})),monthlySales:0,loans:0,stock:{listed:false,price:10,total:1000,founder:1000,available:0,owned:0,history:[]}};
+ log(name+' gegründet. Startkapital: 500 €.');$('setup').classList.add('hidden');$('game').classList.remove('hidden');tab='home';render();note('Dein Unternehmen ist gegründet. Die Wirtschaftssimulation läuft!');saveSilent();
+}
+function saveSilent(){try{localStorage.setItem('brandEmpireV2',JSON.stringify(s))}catch(e){}}
+function render(){
+ if(!s)return;
+ if(!s.stock)s.stock={listed:false,price:10,total:1000,founder:1000,available:0,owned:0,history:[]};
+ if(!s.orders)s.orders=[];if(!s.inbox)s.inbox=[];if(!s.nextOrderId)s.nextOrderId=1;if(!s.nextMailId)s.nextMailId=1;
+ $('coTitle').textContent=s.name;$('coMeta').textContent=s.industry+' · '+s.city;$('day').textContent='TAG '+s.day+' · MONAT '+(Math.floor((s.day-1)/30)+1);
+ $('worldClock').textContent='SIMULATION · TAG '+s.day;
+ $('cash').textContent=money(s.cash);$('privateCash').textContent=money(s.privateCash);$('revenue').textContent=money(s.totalRevenue);$('employees').textContent=s.staff.length;
+ let n=strength();$('score').textContent=n+' / 100';$('scoreBar').style.width=n+'%';$('companyLevel').textContent=level(n);$('scoreInfo').textContent=level(n)+' – '+(n<20?'Du stehst ganz am Anfang.':n<40?'Dein Unternehmen wächst langsam.':'Dein Unternehmen hat sich am Markt etabliert.');
+ document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));draw();
+}
+function staffImpactText(){if(!s.staff.length)return 'Noch kein Team: keine zusätzliche Produktion, kein Vertriebsbonus und keine Forschung.';let c=j=>s.staff.filter(x=>x.job===j).length,prod=c('Produktion')+c('Allround'),sales=c('Vertrieb')+c('Allround'),mkt=c('Marketing'),rd=c('Forschung & Entwicklung'),admin=c('Büro & Verwaltung'),cs=c('Kundenservice'),mgr=c('Abteilungsleitung');return `Kundenservice: ${cs} · Produktion: ${prod} · Vertrieb: ${sales} · Marketing: ${mkt} · Forschung: ${rd} · Verwaltung: ${admin} · Leitung: ${mgr}. Produktion stellt täglich Ware her, Vertrieb erhöht Verkäufe, Marketing bringt Nachfrage, Forschung verbessert Produkte und Verwaltung senkt Bürokosten, Kundenservice bearbeitet Bestellungen und beantwortet E-Mails. Leitung verstärkt die Teamleistung.`}
+function draw(){
+ let h='';
+ if(tab==='home'){
+  let profit=s.totalRevenue-s.totalCosts;
+  h=`<h2 class="section-title">Unternehmensübersicht</h2><p class="muted">Dein Unternehmen entwickelt sich Tag für Tag. Die Konkurrenz handelt selbstständig.</p>
+  <div class="grid three"><div class="stat"><span>Produkte</span><strong>${s.products.length}</strong></div><div class="stat"><span>Büro-Level</span><strong>${s.office.level}</strong></div><div class="stat"><span>Kunden</span><strong>${s.customers}</strong></div><div class="stat"><span>Gesamtausgaben</span><strong>${money(s.totalCosts)}</strong></div><div class="stat"><span>Saldo seit Start</span><strong class="${profit>=0?'good':'bad'}">${money(profit)}</strong></div><div class="stat"><span>Kredit</span><strong>${money(s.loans)}</strong></div></div>
+  <h3>Was passiert gerade?</h3>${s.logs.slice(0,6).map(x=>`<div class="event">${esc(x)}</div>`).join('')}`;
+ }else if(tab==='products'){
+  h=`<h2 class="section-title">Produkte entwickeln</h2><p class="muted">Entwickle ein Produkt, lege Preis und Qualität fest und produziere einen ersten Lagerbestand.</p>
+  <div class="grid two"><div class="field"><label>Produktname</label><input id="pname" maxlength="35" placeholder="z. B. Performance Hoodie"></div><div class="field"><label>Kategorie</label><select id="pcat"><option>${esc(s.industry)}</option><option>Kleidung</option><option>Schuhe</option><option>Sportartikel</option><option>Technik</option><option>Möbel</option><option>Accessoires</option><option>Sonstiges</option></select></div>
+  <div class="field"><label>Stückkosten (€)</label><input id="pcost" type="number" min="1" value="8"></div><div class="field"><label>Verkaufspreis (€)</label><input id="pprice" type="number" min="2" value="20"></div>
+  <div class="field"><label>Qualität (1–100)</label><input id="pquality" type="number" min="1" max="100" value="65"></div><div class="field"><label>Produktionsmenge</label><input id="pqty" type="number" min="1" max="500" value="5"></div></div>
+  <div class="stat"><span>Benötigtes Produktionsbudget</span><strong id="costPreview">40 €</strong></div><button id="develop" style="margin-top:10px">Produkt entwickeln & herstellen</button>
+  <h3 style="margin-top:22px">Sortiment</h3>${s.products.length?s.products.map((p,i)=>`<div class="item"><div class="row"><div><b>${esc(p.name)}</b><div class="small muted">${esc(p.category)} · Qualität ${p.quality}/100</div></div><span class="pill">${p.stock} auf Lager</span></div><div class="grid three" style="margin-top:9px"><div><span class="small muted">Preis</span><b>${money(p.price)}</b></div><div><span class="small muted">Stückkosten</span><b>${money(p.cost)}</b></div><div><span class="small muted">Verkauft</span><b>${p.sold}</b></div></div><button class="secondary restock" data-i="${i}" style="margin-top:10px">20 Stück nachproduzieren · ${money(p.cost*20)}</button></div>`).join(''):'<p class="muted">Noch keine Produkte. Entwickle dein erstes Produkt.</p>'}`;
+ }else if(tab==='staff'){
+  let wage=s.staff.reduce((a,x)=>a+x.wage,0);
+  h=`<h2 class="section-title">Personal & Abteilungen</h2><p class="muted">Mitarbeiter arbeiten automatisch. Gehälter werden jeden Tag bezahlt.</p><div class="item"><b>Was dein Team bewirkt</b><div class="small muted">${staffImpactText()}</div></div><div class="grid two"><div class="stat"><span>Mitarbeiter</span><strong>${s.staff.length}</strong></div><div class="stat"><span>Gehälter pro Tag</span><strong>${money(wage)}</strong></div></div>
+  <div class="field"><label>Stelle</label><select id="job"><option value="Allround">Allround-Mitarbeiter · 28 €/Tag</option><option value="Produktion">Produktion · 32 €/Tag</option><option value="Vertrieb">Vertrieb · 35 €/Tag</option><option value="Marketing">Marketing · 38 €/Tag</option><option value="Büro & Verwaltung">Büro & Verwaltung · 34 €/Tag</option><option value="Kundenservice">Kundenservice & Bestellungen · 34 €/Tag</option><option value="Forschung & Entwicklung">Forschung & Entwicklung · 45 €/Tag</option><option value="Abteilungsleitung">Abteilungsleitung · 65 €/Tag</option></select></div>
+  <p class="small muted">Einstellungskosten: 40 €. Tagesgehalt je nach Stelle. Kundenservice bearbeitet täglich bis zu 4 Bestellungen und 2 Kunden-E-Mails.</p><button id="hire" ${s.cash<40?'disabled':''}>Mitarbeiter einstellen</button><h3>Dein Team</h3>${s.staff.length?s.staff.map((x,i)=>`<div class="item row"><div><b>${esc(x.job)}</b><div class="small muted">${esc(x.name)} · ${money(x.wage)} pro Tag</div></div><button class="secondary fire" data-i="${i}">Entlassen</button></div>`).join(''):'<p class="muted">Noch keine Mitarbeiter. Du erledigst aktuell alles selbst.</p>'}`;
+ }else if(tab==='office'){
+  let next=s.office.level+1,cost=300+next*450,rent=8+next*12,cap=next*5;
+  h=`<h2 class="section-title">Büros & Standorte</h2><p class="muted">Ein Büro bietet Platz für Mitarbeiter und verbessert die Organisation. Miete wird täglich fällig.</p><div class="grid two"><div class="stat"><span>Büro-Level</span><strong>${s.office.level}</strong></div><div class="stat"><span>Arbeitsplätze</span><strong>${s.office.capacity}</strong></div><div class="stat"><span>Tägliche Miete</span><strong>${money(s.office.rent)}</strong></div><div class="stat"><span>Mitarbeiter</span><strong>${s.staff.length}</strong></div></div>
+  <div class="item"><b>${s.office.level===0?'Kleines Büro mieten':'Nächstes Büro-Upgrade'}</b><p class="small muted">Einmalig ${money(cost)} · Miete danach ${money(rent)} pro Tag · ${cap} zusätzliche Arbeitsplätze.</p><button id="upgradeOffice" ${s.cash<cost?'disabled':''}>${s.office.level===0?'Büro mieten':'Büro erweitern'}</button></div>
+  <p class="small muted">Wenn du mehr Mitarbeiter als Arbeitsplätze hast, sinkt die Produktivität. Später kannst du weitere Standorte und Fabriken ergänzen.</p>`;
+ }else if(tab==='finance'){
+  h=`<h2 class="section-title">Finanzen & Konten</h2><div class="grid two"><div class="stat"><span>Firmenkonto</span><strong>${money(s.cash)}</strong></div><div class="stat"><span>Privatkonto</span><strong>${money(s.privateCash)}</strong></div><div class="stat"><span>Umsatz gesamt</span><strong>${money(s.totalRevenue)}</strong></div><div class="stat"><span>Ausgaben gesamt</span><strong>${money(s.totalCosts)}</strong></div></div>
+  <h3>Überweisung</h3><div class="field"><label>Betrag (€)</label><input id="transfer" type="number" min="1" value="50"></div><div class="actions"><button id="withdraw">Firmenkonto → Privat</button><button id="invest" class="secondary">Privat → Firma</button></div>
+  <h3>Finanzierung</h3><div class="item"><b>Kleinkredit</b><p class="small muted">Leihe 1.000 €. Rückzahlung: 1.100 € in 30 Tagen. Kredit nur aufnehmen, wenn du die Rückzahlung einplanst.</p><button id="loan" ${s.loans>0?'disabled':''}>1.000 € Kredit aufnehmen</button></div><p class="small muted">Offene Kredite: ${money(s.loans)}</p>
+  <h3>Aktien & Börse</h3><p class="small muted">Hier kannst du dein Unternehmen an die Börse bringen und später Aktien handeln.</p><div class="item"><b>${s.stock.listed?'Börsennotiert':'Börsengang (IPO)'}</b><div class="small muted">${s.stock.listed?`Aktienkurs: ${money(s.stock.price)} · Deine Aktien: ${s.stock.owned} · Verfügbare Aktien: ${s.stock.available}`:'Bei einem Börsengang werden 250 neue Aktien ausgegeben. Der Erlös fließt direkt in die Firmenkasse.'}</div><button id="ipo" ${s.stock.listed||s.cash<0?'disabled':''}>${s.stock.listed?'Bereits an der Börse':'Börsengang starten'}</button></div><div class="grid two"><div class="field"><label>Aktienanzahl</label><input id="shareQty" type="number" min=1 value=10></div><div class="stat"><span>Depotwert</span><strong>${money(s.stock.owned*s.stock.price)}</strong></div></div><div class="actions"><button id="buyShares" ${!s.stock.listed?'disabled':''}>Aktien kaufen</button><button id="sellShares" class="secondary" ${!s.stock.listed||!s.stock.owned?'disabled':''}>Aktien verkaufen</button></div>`;
+ }else if(tab==='market'){
+  h=`<h2 class="section-title">Markt & Konkurrenz</h2><p class="muted">Andere Unternehmen treffen eigene Entscheidungen. Sie stellen Leute ein, verkaufen Produkte und verändern ihre Marktposition.</p><div class="grid two"><div class="stat"><span>Deine verkauften Stück</span><strong>${s.unitsSold}</strong></div><div class="stat"><span>Marketingbudget</span><strong>${money(s.marketing)}</strong></div></div>
+  <div class="item"><b>Werbekampagne</b><p class="small muted">Kosten: 80 €. Erhöht die Bekanntheit und kann deine Verkäufe steigern.</p><button id="ad" ${s.cash<80?'disabled':''}>Werbung schalten · 80 €</button></div><h3>Aktienmarkt</h3><div class="item"><b>${s.stock.listed?'Deine Aktie: '+esc(s.name):'Dein Unternehmen ist noch nicht börsennotiert'}</b><p class="small muted">${s.stock.listed?`Kurs ${money(s.stock.price)} · ${s.stock.total} Aktien insgesamt · ${s.stock.available} am Markt verfügbar · ${s.stock.owned} in deinem Depot`:'Gehe im Bereich Finanzen an die Börse, um Aktien auszugeben.'}</p></div><h3>Wettbewerber</h3>
+  <div style="overflow-x:auto"><table class="table"><thead><tr><th>Unternehmen</th><th>Branche</th><th>Team</th><th>Stärke</th><th>Kapital</th></tr></thead><tbody>${s.rivals.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td>${esc(r.industry)}</td><td>${r.staff}</td><td>${r.level}/100</td><td>${money(r.cash)}</td></tr>`).join('')}</tbody></table></div>`;
+ }else if(tab==='orders'){
+  let pending=s.orders.filter(o=>o.status==='Offen').length,openMail=s.inbox.filter(m=>!m.replied).length,service=s.staff.filter(x=>x.job==='Kundenservice').length;
+  h=`<h2 class="section-title">Bestellungen & E-Mail-Zentrale</h2><p class="muted">Kunden bestellen deine Produkte automatisch im Shop. Jede Bestellung landet hier. Kundenservice-Mitarbeiter bearbeiten Bestellungen und beantworten Anfragen.</p><div class="grid three"><div class="stat"><span>Bestellungen gesamt</span><strong>${s.orders.length}</strong></div><div class="stat"><span>Offene Bestellungen</span><strong>${pending}</strong></div><div class="stat"><span>Ungelesene E-Mails</span><strong>${openMail}</strong></div></div><div class="item"><b>Kundenservice</b><p class="small muted">${service} Mitarbeiter · ${service*4} Bestellungen und ${service*2} E-Mails pro Tag automatisch. Ohne Mitarbeiter musst du alles manuell erledigen.</p><button id="manualProcess" class="secondary">Offene Bestellungen manuell bearbeiten (bis zu 3)</button></div><h3>Bestellungen</h3>${s.orders.length?s.orders.slice().reverse().map(o=>`<div class="item"><div class="row"><div><b>#${o.id} · ${esc(o.product)}</b><div class="small muted">${esc(o.customer)} · Tag ${o.day} · ${o.qty} Stück · ${money(o.amount)}</div></div><span class="pill">${esc(o.status)}</span></div>${o.status==='Offen'?`<button class="secondary fulfill" data-id="${o.id}" style="margin-top:9px">Bestellung bearbeiten & versenden</button>`:''}</div>`).join(''):'<p class="muted">Noch keine Bestellungen. Sobald du Produkte anbietest und Tage simulierst, bestellen Kunden automatisch.</p>'}<h3 style="margin-top:22px">E-Mail-Postfach · kundenservice@${esc(s.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'firma')}.de</h3>${s.inbox.length?s.inbox.slice().reverse().map(m=>`<div class="item"><div class="row"><b>${esc(m.subject)}</b><span class="pill">${m.replied?'Beantwortet':'Offen'}</span></div><div class="small muted">Von ${esc(m.from)} · Tag ${m.day}</div><p style="margin:8px 0">${esc(m.body)}</p>${!m.replied?`<button class="secondary replyMail" data-id="${m.id}">Antwort senden</button>`:''}</div>`).join(''):'<p class="muted">Noch keine Kunden-E-Mails.</p>'}`;
+ }else{
+  h=`<h2 class="section-title">Geschäftsberichte</h2><div class="grid two"><div class="stat"><span>Umsatz gesamt</span><strong>${money(s.totalRevenue)}</strong></div><div class="stat"><span>Ausgaben gesamt</span><strong>${money(s.totalCosts)}</strong></div><div class="stat"><span>Unternehmensstärke</span><strong>${strength()}/100</strong></div><div class="stat"><span>Produkte verkauft</span><strong>${s.unitsSold}</strong></div></div><h3>Wirtschaftsprotokoll</h3>${s.logs.map(x=>`<div class="event">${esc(x)}</div>`).join('')}`;
+ }
+ $('view').innerHTML=h;
+ if(tab==='products'){
+  const upd=()=>{$('costPreview').textContent=money((Number($('pcost').value)||0)*(Number($('pqty').value)||0))};$('pcost').oninput=upd;$('pqty').oninput=upd;$('develop').onclick=develop;
+  document.querySelectorAll('.restock').forEach(b=>b.onclick=()=>restock(+b.dataset.i));
+ }if(tab==='staff'){$('hire').onclick=hire;document.querySelectorAll('.fire').forEach(b=>b.onclick=()=>fire(+b.dataset.i))}
+ if(tab==='orders'){$('manualProcess').onclick=()=>processOrders(3);document.querySelectorAll('.fulfill').forEach(b=>b.onclick=()=>fulfillOrder(+b.dataset.id));document.querySelectorAll('.replyMail').forEach(b=>b.onclick=()=>replyEmail(+b.dataset.id))}
+ if(tab==='office')$('upgradeOffice').onclick=upgradeOffice;
+ if(tab==='finance'){$('withdraw').onclick=()=>transfer('out');$('invest').onclick=()=>transfer('in');$('loan').onclick=loan;$('ipo').onclick=ipo;if($('buyShares'))$('buyShares').onclick=()=>tradeShares('buy');if($('sellShares'))$('sellShares').onclick=()=>tradeShares('sell')}
+ if(tab==='market')$('ad').onclick=ad;
+}
+function develop(){
+ let name=$('pname').value.trim(),category=$('pcat').value,cost=+$('pcost').value,price=+$('pprice').value,quality=+$('pquality').value,qty=+$('pqty').value;
+ if(!name||cost<=0||price<=cost||quality<1||quality>100||!Number.isInteger(qty)||qty<1||qty>500){note('Bitte gültige Angaben eingeben. Der Verkaufspreis muss über den Stückkosten liegen.');return}
+ let total=cost*qty;if(total>s.cash){note('Nicht genug Geld auf dem Firmenkonto.');return}
+ s.cash-=total;s.totalCosts+=total;s.products.push({name,category,cost,price,quality,stock:qty,sold:0});log(qty+' Stück '+name+' entwickelt und produziert.');note('Produkt ist im Sortiment!');render();saveSilent();
+}
+function restock(i){let p=s.products[i],cost=p.cost*20;if(s.cash<cost){note('Nicht genug Geld für die Produktion.');return}s.cash-=cost;s.totalCosts+=cost;p.stock+=20;log('20 Stück '+p.name+' nachproduziert.');note('Nachproduktion abgeschlossen.');render();saveSilent()}
+function hire(){let job=$('job').value,wages={'Allround':28,'Produktion':32,'Vertrieb':35,'Marketing':38,'Büro & Verwaltung':34,'Kundenservice':34,'Forschung & Entwicklung':45,'Abteilungsleitung':65};if(s.cash<40){note('Nicht genug Geld für die Einstellung.');return}if(s.staff.length>=s.office.capacity&&s.office.level>0){note('Dein Büro hat keine freien Arbeitsplätze. Erweitere es zuerst.');return}let names=['Alex','Sam','Robin','Mika','Luca','Kim','Noah','Jamie','Taylor','Milan'];s.cash-=40;s.totalCosts+=40;s.staff.push({job,wage:wages[job],name:names[(s.staff.length+s.day)%names.length]+' '+(s.staff.length+1)});log('Mitarbeiter für '+job+' eingestellt.');note('Mitarbeiter eingestellt.');render();saveSilent()}
+function fire(i){let x=s.staff.splice(i,1)[0];log(x.name+' ('+x.job+') wurde entlassen.');note('Mitarbeiter entlassen.');render();saveSilent()}
+function upgradeOffice(){let n=s.office.level+1,cost=300+n*450;if(s.cash<cost){note('Nicht genug Geld.');return}s.cash-=cost;s.totalCosts+=cost;s.office.level=n;s.office.rent=8+n*12;s.office.capacity=n*5;log('Büro auf Level '+n+' erweitert.');note('Dein Büro wurde erweitert.');render();saveSilent()}
+function transfer(dir){let amount=+$('transfer').value;if(amount<=0){note('Bitte Betrag eingeben.');return}if(dir==='out'){if(amount>s.cash){note('Nicht genug Firmenkapital.');return}s.cash-=amount;s.privateCash+=amount;log(money(amount)+' privat entnommen.')}else{if(amount>s.privateCash){note('Nicht genug privates Geld.');return}s.privateCash-=amount;s.cash+=amount;log(money(amount)+' privat eingezahlt.')}note('Überweisung abgeschlossen.');render();saveSilent()}
+function loan(){if(s.loans){note('Es ist bereits ein Kredit offen.');return}s.cash+=1000;s.loans=1100;log('Kredit über 1.000 € aufgenommen. Rückzahlung 1.100 € in 30 Tagen.');note('Kredit aufgenommen.');render();saveSilent()}
+function ad(){if(s.cash<80)return;s.cash-=80;s.totalCosts+=80;s.marketing+=80;log('Werbekampagne für 80 € gestartet.');note('Werbekampagne läuft.');render();saveSilent()}
+function ipo(){if(s.stock.listed)return;let price=Math.max(5,Math.round((10+strength()*.35)*100)/100),count=250,proceeds=price*count;s.stock.listed=true;s.stock.price=price;s.stock.total+=count;s.stock.available=count;s.cash+=proceeds;s.stock.history=[price];log('Börsengang: '+count+' Aktien zu '+money(price)+' ausgegeben. '+money(proceeds)+' frisches Kapital.');note('Dein Unternehmen ist jetzt börsennotiert!');render();saveSilent()}
+function tradeShares(side){let qty=Math.floor(+$('shareQty').value);if(!Number.isFinite(qty)||qty<1){note('Bitte eine gültige Aktienanzahl eingeben.');return}let value=qty*s.stock.price;if(side==='buy'){if(qty>s.stock.available){note('So viele Aktien sind aktuell nicht verfügbar.');return}if(value>s.privateCash){note('Du hast nicht genug Geld auf deinem Privatkonto.');return}s.privateCash-=value;s.stock.available-=qty;s.stock.owned+=qty;log(qty+' Aktien für '+money(value)+' gekauft.')}else{if(qty>s.stock.owned){note('Du besitzt nicht so viele Aktien.');return}s.privateCash+=value;s.stock.owned-=qty;s.stock.available+=qty;log(qty+' Aktien für '+money(value)+' verkauft.')}note('Aktienhandel abgeschlossen.');render();saveSilent()}
+function processOrdersSilent(orderLimit,mailLimit){let n=0;for(let o of s.orders){if(n>=orderLimit)break;if(o.status==='Offen'){o.status='Versendet';o.shipDay=s.day;n++;}}let m=0;for(let x of s.inbox){if(m>=mailLimit)break;if(!x.replied){x.replied=true;x.replyDay=s.day;m++;}}}
+function fulfillOrder(id){let o=s.orders.find(x=>x.id===id);if(!o||o.status!=='Offen')return;o.status='Versendet';o.shipDay=s.day;log('Bestellung #'+o.id+' an '+o.customer+' wurde versendet.');note('Bestellung versendet.');render();saveSilent()}
+function processOrders(limit){let done=0;for(let o of s.orders){if(done>=limit)break;if(o.status==='Offen'){o.status='Versendet';o.shipDay=s.day;done++;}}let mails=0;for(let m of s.inbox){if(mails>=Math.max(1,Math.floor(limit/2)))break;if(!m.replied){m.replied=true;m.replyDay=s.day;mails++;}}log('Kundenservice: '+done+' Bestellungen versendet und '+mails+' E-Mails beantwortet.');note(done+' Bestellungen und '+mails+' E-Mails bearbeitet.');render();saveSilent()}
+function replyEmail(id){let m=s.inbox.find(x=>x.id===id);if(!m||m.replied)return;m.replied=true;m.replyDay=s.day;log('E-Mail von '+m.from+' beantwortet.');note('Antwort an '+m.from+' gesendet.');render();saveSilent()}
+function simulateDay(){
+ s.day++;let sales=0,units=0;
+ // Competitors run their own small economy every day.
+ s.rivals.forEach(r=>{let demand=Math.max(0,Math.floor(1+Math.random()*3+r.level/35));let sold=Math.min(r.products*2,demand);r.cash+=sold*(12+Math.floor(Math.random()*18))-r.staff*(1+Math.random()*2);r.level=Math.max(5,Math.min(100,r.level+(Math.random()>.55?1:0)));if(r.cash<0){r.cash=0;r.level=Math.max(5,r.level-2);}});
+ let count=job=>s.staff.filter(x=>x.job===job).length;
+ let leaders=count('Abteilungsleitung'),all=count('Allround'),salesTeam=count('Vertrieb')+all,marketingTeam=count('Marketing'),researchTeam=count('Forschung & Entwicklung'),productionTeam=count('Produktion')+all,adminTeam=count('Büro & Verwaltung');
+ let teamBoost=1+leaders*.08;
+ s.products.forEach(p=>{
+   let rivalPressure=s.rivals.filter(r=>r.industry===s.industry||r.industry===p.category).length*.12;
+   let officeBonus=s.office.level?1.12:1;
+   let qualityBonus=.55+p.quality/100;
+   let marketingBonus=1+s.marketing/500+marketingTeam*.10*teamBoost;
+   let salesBonus=1+salesTeam*.12*teamBoost;
+   let demand=Math.max(0,Math.floor((1+Math.random()*2.5)*qualityBonus*marketingBonus*salesBonus*officeBonus*(1-rivalPressure*.08)));
+   let sold=Math.min(p.stock,demand);p.stock-=sold;p.sold+=sold;units+=sold;sales+=sold*p.price;if(sold>0){let chunks=Math.min(3,Math.ceil(sold/2));for(let k=0;k<chunks;k++){let qty=Math.max(1,Math.floor(sold/chunks)+(k<sold%chunks?1:0));s.orders.push({id:s.nextOrderId++,customer:['Mia Schneider','Leon Weber','Emma Fischer','Noah Wagner','Lina Becker','Ben Hoffmann'][Math.floor(Math.random()*6)],product:p.name,qty,amount:qty*p.price,day:s.day,status:'Offen'});}}
+ });
+ // Production employees replenish inventory after sales, ready for the next day.
+ let produced=0,productionCost=0;
+ if(productionTeam>0&&s.products.length){let perProduct=Math.max(1,Math.floor(productionTeam*2*teamBoost));s.products.forEach(p=>{let qty=Math.min(perProduct,Math.max(0,200-p.stock));let affordable=p.cost>0?Math.floor(Math.max(0,s.cash+sales)/p.cost):qty;qty=Math.min(qty,affordable);p.stock+=qty;produced+=qty;productionCost+=qty*p.cost;});}
+ // Research improves product quality gradually; administration makes office operations cheaper.
+ if(researchTeam>0&&s.day%10===0){s.products.forEach(p=>p.quality=Math.min(100,p.quality+researchTeam));log('Forschung verbessert die Produktqualität.');}
+ let wages=s.staff.reduce((a,x)=>a+x.wage,0),rent=Math.max(0,s.office.rent-adminTeam*2),operating=wages+rent+productionCost;
+ // Office increases organizational capacity but costs rent; salaries and rent are paid daily.
+ s.cash+=sales-operating;s.totalRevenue+=sales;s.totalCosts+=operating;s.unitsSold+=units;s.customers+=units?Math.max(1,Math.ceil(units*.8)):0;
+ if(s.day%3===0&&s.products.length){let p=s.products[Math.floor(Math.random()*s.products.length)];s.inbox.push({id:s.nextMailId++,from:['kunde@mail.de','bestellung@web.de','frage@kunden.de'][Math.floor(Math.random()*3)],subject:['Frage zu meiner Bestellung','Wann wird geliefert?','Frage zum Produkt'][Math.floor(Math.random()*3)],body:'Hallo, ich interessiere mich für '+p.name+'. Können Sie mir bitte weitere Informationen geben? Vielen Dank!',day:s.day,replied:false});}
+ let serviceCount=count('Kundenservice');if(serviceCount>0){let before=s.orders.filter(o=>o.status==='Offen').length;processOrdersSilent(serviceCount*4,serviceCount*2);let after=s.orders.filter(o=>o.status==='Offen').length;if(before!==after)log('Kundenservice hat '+(before-after)+' Bestellungen automatisch bearbeitet.');}
+ if(s.day%30===0&&s.loans){s.cash-=s.loans;s.totalCosts+=s.loans;log('Kreditrate von '+money(s.loans)+' bezahlt.');s.loans=0}
+ log(units+' Stück verkauft: '+money(sales)+' Umsatz. Team: '+produced+' Stück produziert, Vertrieb/Marketing aktiv. Personal '+money(wages)+', Büromiete '+money(rent)+'.');
+ if(s.stock?.listed){let performance=sales-operating;let movement=(performance>0?0.012:-0.009)+(strength()-35)/5000+(Math.random()-.5)*.035;s.stock.price=Math.max(.5,Math.round(s.stock.price*(1+movement)*100)/100);s.stock.history.push(s.stock.price);if(s.stock.history.length>30)s.stock.history.shift();}
+ if(s.cash<0)log('WARNUNG: Firmenkonto ist im Minus. Du musst Kosten senken oder Geld einzahlen.');
+ note('Tag '+s.day+': '+units+' Verkäufe und '+money(sales)+' Umsatz.');render();saveSilent();
+}
+function reset(){if(confirm('Neues Spiel starten? Der aktuelle Spielstand wird gelöscht.')){localStorage.removeItem('brandEmpireV2');location.reload()}}
+$('start').onclick=newGame;$('nextDay').onclick=simulateDay;$('save').onclick=save;$('reset').onclick=reset;
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+try{let old=JSON.parse(localStorage.getItem('brandEmpireV2'));if(old&&old.name&&old.rivals&&old.office){s=old;$('setup').classList.add('hidden');$('game').classList.remove('hidden');render();note('Dein gespeicherter Spielstand wurde geladen.')}}catch(e){}
+})();
+</script></body></html>
